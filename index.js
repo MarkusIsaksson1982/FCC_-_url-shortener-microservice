@@ -25,12 +25,18 @@ app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
-// Endpoint to shorten URL
 app.post('/api/shorturl', (req, res) => {
   const originalUrl = req.body.url;
+
+  // Validate URL format
+  const urlRegex = /^(https?:\/\/)(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/.*)?$/;
+  if (!urlRegex.test(originalUrl)) {
+    return res.json({ error: 'invalid url' });
+  }
+
   const urlObject = urlParser.parse(originalUrl);
 
-  // Validate the URL
+  // Perform DNS lookup
   dns.lookup(urlObject.hostname, (err) => {
     if (err) {
       return res.json({ error: 'invalid url' });
@@ -43,6 +49,7 @@ app.post('/api/shorturl', (req, res) => {
     res.json({ original_url: originalUrl, short_url: shortUrl });
   });
 });
+
 
 // Endpoint to redirect to original URL
 app.get('/api/shorturl/:shorturl', (req, res) => {
