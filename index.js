@@ -29,26 +29,25 @@ app.get('/', function(req, res) {
 app.post('/api/shorturl', (req, res) => {
   const originalUrl = req.body.url;
 
-  // Validate URL format using regex
+  // Validate URL format with regex (basic HTTP/HTTPS with optional "www")
   const urlRegex = /^(https?:\/\/)(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/.*)?$/;
   if (!urlRegex.test(originalUrl)) {
     return res.json({ error: 'invalid url' });
   }
 
-  // Parse URL and get hostname for DNS lookup
   const urlObject = urlParser.parse(originalUrl);
 
-  // DNS lookup to ensure hostname is valid
+  // Perform DNS lookup to check if the domain is reachable
   dns.lookup(urlObject.hostname, (err) => {
     if (err) {
       return res.json({ error: 'invalid url' });
     }
 
-    // Add URL to the in-memory database
+    // Add URL to database and generate short URL
     const shortUrl = idCounter++;
     urlDatabase.push({ original_url: originalUrl, short_url: shortUrl });
 
-    // Send JSON response with original and short URL
+    // Respond with the original and short URL
     res.json({ original_url: originalUrl, short_url: shortUrl });
   });
 });
@@ -57,14 +56,12 @@ app.post('/api/shorturl', (req, res) => {
 app.get('/api/shorturl/:shorturl', (req, res) => {
   const shortUrl = parseInt(req.params.shorturl);
 
-  // Find the entry in the database
+  // Find the original URL by short URL
   const urlEntry = urlDatabase.find(entry => entry.short_url === shortUrl);
 
-  // If URL entry exists, redirect to original URL
   if (urlEntry) {
-    return res.redirect(urlEntry.original_url);
+    return res.redirect(urlEntry.original_url);  // Redirect to the original URL
   } else {
-    // If not found, send an error response
     res.json({ error: 'No short URL found for the given input' });
   }
 });
