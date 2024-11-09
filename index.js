@@ -6,7 +6,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const dns = require('dns');
 const urlParser = require('url');
-
 const app = express();
 
 // Basic Configuration
