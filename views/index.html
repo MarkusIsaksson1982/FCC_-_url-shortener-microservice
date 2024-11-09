@@ -1,0 +1,26 @@
+<!-- I have utilized ChatGPT as a resource for guidance and learning throughout this project. My approach reflects the growing trend of modern developers using AI tools to enhance their coding processes. However, all the final code presented here is my own work, based on own independently thought out prompts and without copying prompts or code from others other than snippets. I believe this practice aligns with the principles of academic honesty, as it emphasizes learning and using technology responsibly. -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My URL Shortener</title>
+    <link href="/public/style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>My URL Shortener</h1>
+    <main>
+      <section>
+        <form action="api/shorturl" method="POST">
+          <fieldset>
+            <legend>Enter a URL to shorten:</legend>
+            <input id="url_input" type="text" name="url" placeholder="https://example.com" required />
+            <input type="submit" value="Shorten URL" />
+          </fieldset>
+        </form>
+      </section>
+    </main>
+    <footer>
+      <p>By <a href="https://www.example.com">Markus Isaksson</a></p>
+    </footer>
+  </body>
+</html>
