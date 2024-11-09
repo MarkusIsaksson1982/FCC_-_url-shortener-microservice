@@ -47,6 +47,7 @@ app.post('/api/shorturl', (req, res) => {
     const shortUrl = idCounter++;
     urlDatabase.push({ original_url: originalUrl, short_url: shortUrl });
 
+    // Respond with the original and short URL
     res.json({ original_url: originalUrl, short_url: shortUrl });
   });
 });
@@ -59,8 +60,10 @@ app.get('/api/shorturl/:shorturl', (req, res) => {
   const urlEntry = urlDatabase.find(entry => entry.short_url === shortUrl);
 
   if (urlEntry) {
+    console.log(`Redirecting to: ${urlEntry.original_url}`); // Debugging log
     return res.redirect(urlEntry.original_url);
   } else {
+    console.log(`No matching short URL found for: ${shortUrl}`); // Debugging log
     res.json({ error: 'No short URL found for the given input' });
   }
 });
