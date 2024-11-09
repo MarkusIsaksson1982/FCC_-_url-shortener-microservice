@@ -12,7 +12,7 @@ const app = express();
 // Basic Configuration
 const port = process.env.PORT || 3000;
 
-// In-memory URL store
+// In-memory URL store and counter for short URLs
 let urlDatabase = [];
 let idCounter = 1;
 
@@ -25,6 +25,7 @@ app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
+// Endpoint to shorten URL
 app.post('/api/shorturl', (req, res) => {
   const originalUrl = req.body.url;
 
@@ -50,10 +51,11 @@ app.post('/api/shorturl', (req, res) => {
   });
 });
 
-
-// Endpoint to redirect to original URL
+// Endpoint to redirect to original URL based on short URL
 app.get('/api/shorturl/:shorturl', (req, res) => {
   const shortUrl = parseInt(req.params.shorturl);
+
+  // Find the original URL by short URL
   const urlEntry = urlDatabase.find(entry => entry.short_url === shortUrl);
 
   if (urlEntry) {
