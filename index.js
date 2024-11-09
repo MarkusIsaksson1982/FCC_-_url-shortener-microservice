@@ -6,6 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const dns = require('dns');
 const urlParser = require('url');
+
 const app = express();
 
 // Basic Configuration
@@ -62,6 +63,19 @@ app.get('/api/shorturl/:shorturl', (req, res) => {
   } else {
     res.json({ error: 'No short URL found for the given input' });
   }
+});
+
+// Endpoint to get user info
+app.get('/api/whoami', (req, res) => {
+  const ipaddress = req.ip;
+  const language = req.headers['accept-language'];
+  const software = req.headers['user-agent'];
+
+  res.json({
+    ipaddress: ipaddress,
+    language: language,
+    software: software
+  });
 });
 
 app.listen(port, function() {
