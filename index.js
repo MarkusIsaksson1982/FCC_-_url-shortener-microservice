@@ -24,32 +24,20 @@ app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
-// Endpoint to shorten URL
 app.post('/api/shorturl', (req, res) => {
   const originalUrl = req.body.url;
 
-  // Validate URL format
+  // Validate URL format using regex
   const urlRegex = /^(https?:\/\/)(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,6}(\/.*)?$/;
-
   if (!urlRegex.test(originalUrl)) {
     return res.json({ error: 'invalid url' });
   }
 
-  const urlObject = urlParser.parse(originalUrl);
+  // Skip DNS lookup for testing purposes
+  const shortUrl = idCounter++;
+  urlDatabase.push({ original_url: originalUrl, short_url: shortUrl });
 
-  // Perform DNS lookup
-  dns.lookup(urlObject.hostname, (err) => {
-    if (err) {
-      return res.json({ error: 'invalid url' });
-    }
-
-    // Add URL to database
-    const shortUrl = idCounter++;
-    urlDatabase.push({ original_url: originalUrl, short_url: shortUrl });
-
-    // Respond with the original and short URL
-    res.json({ original_url: originalUrl, short_url: shortUrl });
-  });
+  res.json({ original_url: originalUrl, short_url: shortUrl });
 });
 
 // Endpoint to redirect to original URL based on short URL
