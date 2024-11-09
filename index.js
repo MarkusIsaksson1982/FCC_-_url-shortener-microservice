@@ -6,7 +6,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const dns = require('dns');
 const urlParser = require('url');
-
 const app = express();
 
 // Basic Configuration
@@ -28,8 +27,8 @@ app.get('/', function(req, res) {
 // Endpoint to shorten URL
 app.post('/api/shorturl', (req, res) => {
   const originalUrl = req.body.url;
-
-  // Validate URL format with regex (basic HTTP/HTTPS with optional "www")
+  
+  // Validate URL format
   const urlRegex = /^(https?:\/\/)(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/.*)?$/;
   if (!urlRegex.test(originalUrl)) {
     return res.json({ error: 'invalid url' });
@@ -37,13 +36,13 @@ app.post('/api/shorturl', (req, res) => {
 
   const urlObject = urlParser.parse(originalUrl);
 
-  // Perform DNS lookup to check if the domain is reachable
+  // Perform DNS lookup
   dns.lookup(urlObject.hostname, (err) => {
     if (err) {
       return res.json({ error: 'invalid url' });
     }
 
-    // Add URL to database and generate short URL
+    // Add URL to database
     const shortUrl = idCounter++;
     urlDatabase.push({ original_url: originalUrl, short_url: shortUrl });
 
@@ -58,9 +57,8 @@ app.get('/api/shorturl/:shorturl', (req, res) => {
 
   // Find the original URL by short URL
   const urlEntry = urlDatabase.find(entry => entry.short_url === shortUrl);
-
   if (urlEntry) {
-    return res.redirect(urlEntry.original_url);  // Redirect to the original URL
+    return res.redirect(urlEntry.original_url);
   } else {
     res.json({ error: 'No short URL found for the given input' });
   }
